@@ -6,6 +6,8 @@ const getTalkerId = require('./utils/getTalkerId');
 const deleteTalker = require('./utils/deleteTalker');
 const { tokenGenerator } = require('./utils/tokenGenerator');
 const tokenValidate = require('./middlewares/tokenValidate');
+const loginValidate = require('./middlewares/loginValidate');
+const talkerValidate = require('./middlewares/talkerValidate');
 
 const app = express();
 app.use(bodyParser.json());
@@ -35,21 +37,11 @@ app.get('/talker/:id', async ({ params: { id } }, res) => {
 
 // app.get('/talker/search?q=searchTerm');
 
-app.post('/login', ({ body: { email, password } }, res) => {
-  if (!email) return res.status(400).json({ message: 'O campo "email" é obrigatório' });
-  if (!/^\w+@\w+(\.\w+)+$/i.test(email)) {
-    return res.status(400)
-      .json({ message: 'O "email" deve ter o formato "email@email.com"' });
-  }
-  if (!password) return res.status(400).json({ message: 'O campo "password" é obrigatório' });
-  if (password.length < 6) {
-    return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
-  }
-
+app.post('/login', loginValidate, (_req, res) => {
   res.status(HTTP_OK_STATUS).json({ token: tokenGenerator() });
 });
 
-app.post('/talker', tokenValidate, (req, res) => {
+app.post('/talker', tokenValidate, talkerValidate, (req, res) => {
   res.status(HTTP_OK_STATUS).send();
 });
 
