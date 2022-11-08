@@ -4,10 +4,12 @@ const bodyParser = require('body-parser');
 const getTalker = require('./utils/getTalker');
 const getTalkerId = require('./utils/getTalkerId');
 const deleteTalker = require('./utils/deleteTalker');
+const addTalker = require('./utils/addTalker');
 const { tokenGenerator } = require('./utils/tokenGenerator');
 const tokenValidate = require('./middlewares/tokenValidate');
 const loginValidate = require('./middlewares/loginValidate');
 const talkerValidate = require('./middlewares/talkerValidate');
+const talkValidate = require('./middlewares/talkValidate');
 
 const app = express();
 app.use(bodyParser.json());
@@ -41,8 +43,16 @@ app.post('/login', loginValidate, (_req, res) => {
   res.status(HTTP_OK_STATUS).json({ token: tokenGenerator() });
 });
 
-app.post('/talker', tokenValidate, talkerValidate, (req, res) => {
-  res.status(HTTP_OK_STATUS).send();
+app.post('/talker', tokenValidate, talkerValidate, talkValidate, (
+  { body, body: { talk: { rate } } },
+  res,
+) => {
+  if (Number(rate) < 1 || Number(rate) > 5) {
+    return res.status(400)
+      .json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
+  addTalker(body);
+  res.status(201).send();
 });
 
 // app.put('/talker/:id');
