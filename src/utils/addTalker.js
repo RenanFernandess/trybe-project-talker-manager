@@ -4,8 +4,10 @@ const saveTalkerList = require('./saveTalkerList');
 
 const addTalker = async (talker) => {
   const talkers = await getTalker();
-  const talkerList = [...talkers, { ...talker, id: (talkers.length + 1) }];
-  saveTalkerList(talkerList);
+  const obj = { ...talker, id: (talkers.length + 1) };
+  const talkerList = [...talkers, obj];
+  await saveTalkerList(talkerList);
+  return obj;
 };
 
 module.exports = addTalker;
