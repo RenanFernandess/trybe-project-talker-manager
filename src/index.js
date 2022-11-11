@@ -5,6 +5,7 @@ const getTalker = require('./utils/getTalker');
 const getTalkerId = require('./utils/getTalkerId');
 const deleteTalker = require('./utils/deleteTalker');
 const addTalker = require('./utils/addTalker');
+const updateTalker = require('./utils/updateTalker');
 const { tokenGenerator } = require('./utils/tokenGenerator');
 const tokenValidate = require('./middlewares/tokenValidate');
 const loginValidate = require('./middlewares/loginValidate');
@@ -48,7 +49,11 @@ app.post('/talker', tokenValidate, talkerValidate, talkValidate, async ({ body }
   return res.status(201).send(talker);
 });
 
-// app.put('/talker/:id');
+app.put('/talker/:id', tokenValidate, talkerValidate, talkValidate, async (
+  { params: { id }, body }, res) => {
+  const talker = await updateTalker(Number(id), body);
+  return res.status(HTTP_OK_STATUS).json(talker);
+});
 
 app.delete('/talker/:id', tokenValidate, ({ params: { id } }, res) => {
   deleteTalker(Number(id));
