@@ -18,7 +18,8 @@ const checkWatchedAt = (item) => {
 const checkRate = (rate) => {
   let message;
   let code;
-  if (!rate) {
+  console.log(rate);
+  if (Number.isNaN(rate)) {
     code = CODE_ERROR;
     message = 'O campo "rate" é obrigatório';
     return { code, message };
