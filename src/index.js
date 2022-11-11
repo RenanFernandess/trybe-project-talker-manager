@@ -43,16 +43,9 @@ app.post('/login', loginValidate, (_req, res) => {
   res.status(HTTP_OK_STATUS).json({ token: tokenGenerator() });
 });
 
-app.post('/talker', tokenValidate, talkerValidate, talkValidate, (
-  { body, body: { talk: { rate } } },
-  res,
-) => {
-  if (Number(rate) < 1 || Number(rate) > 5) {
-    return res.status(400)
-      .json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
-  }
-  addTalker(body);
-  res.status(201).send();
+app.post('/talker', tokenValidate, talkerValidate, talkValidate, async ({ body }, res) => {
+  const talker = await addTalker(body);
+  return res.status(201).send(talker);
 });
 
 // app.put('/talker/:id');
