@@ -55,9 +55,9 @@ app.put('/talker/:id', tokenValidate, talkerValidate, talkValidate, async (
   return res.status(HTTP_OK_STATUS).json(talker);
 });
 
-app.delete('/talker/:id', tokenValidate, ({ params: { id } }, res) => {
-  deleteTalker(Number(id));
-  res.status(204).send();
+app.delete('/talker/:id', tokenValidate, async ({ params: { id } }, res) => {
+  await deleteTalker(Number(id));
+  return res.status(204).send();
 });
 
 app.listen(PORT, () => {
