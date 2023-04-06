@@ -11,6 +11,7 @@ const tokenValidate = require('./middlewares/tokenValidate');
 const loginValidate = require('./middlewares/loginValidate');
 const talkerValidate = require('./middlewares/talkerValidate');
 const talkValidate = require('./middlewares/talkValidate');
+const findTalkerByQuery = require('./utils/findTalkersByQuery');
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,6 +29,11 @@ app.get('/talker', async (_req, res) => {
   res.status(HTTP_OK_STATUS).json(talkers);
 });
 
+app.get('/talker/search', tokenValidate, async ({ query: { q } }, res) => {
+  const talkers = await (q ? findTalkerByQuery(q) : getTalker());
+  return res.status(200).json(talkers);
+});
+
 app.get('/talker/:id', async ({ params: { id } }, res) => {
   const talker = await getTalkerId(Number(id));
 
@@ -37,8 +43,6 @@ app.get('/talker/:id', async ({ params: { id } }, res) => {
     message: 'Pessoa palestrante não encontrada',
   });
 });
-
-// app.get('/talker/search?q=searchTerm');
 
 app.post('/login', loginValidate, (_req, res) => {
   res.status(HTTP_OK_STATUS).json({ token: tokenGenerator() });
